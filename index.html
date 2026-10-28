@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Small Town Bank - Pro Sky Edition</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #010814 0%, #061830 50%, #000308 100%);
+            --glass-bg: rgba(0, 242, 254, 0.03);
+            --glass-border: rgba(0, 242, 254, 0.15);
+            --accent-sky: #00f2fe;
+            --accent-sky-glow: rgba(0, 242, 254, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 11, 24, 0.97);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            box-shadow: 0 0 60px rgba(0, 242, 254, 0.1);
+        }
+
+        .top-bar {
+            padding: 22px 20px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo i {
+            font-size: 26px;
+            color: var(--accent-sky);
+            filter: drop-shadow(0 0 14px var(--accent-sky-glow));
+            animation: pulseIcon 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px var(--accent-sky-glow)); }
+            50% { transform: scale(1.08); filter: drop-shadow(0 0 20px var(--accent-sky)); }
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            background: linear-gradient(120deg, #ffffff 30%, var(--accent-sky) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tab-bar {
+            display: flex;
+            background: rgba(0, 242, 254, 0.02);
+            margin: 12px 20px 15px;
+            padding: 6px;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.22) 0%, rgba(0, 114, 255, 0.08) 100%);
+            color: var(--accent-sky);
+            border: 1px solid rgba(0, 242, 254, 0.5);
+            box-shadow: 0 6px 22px rgba(0, 242, 254, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 20px 30px;
+            scrollbar-width: none;
+        }
+
+        .app-content::-webkit-scrollbar { display: none; }
+
+        .screen {
+            display: none;
+            animation: slideUpFade 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .screen.active { display: block; }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(25px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .shake-error { animation: shake 0.4s ease-in-out; border: 1.5px solid #ef4444 !important; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .success-animate { animation: successPop 0.4s ease-out; border: 1.5px solid #00f2fe !important; }
+        @keyframes successPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        .virtual-card {
+            background: linear-gradient(135deg, #08233f 0%, #020d1c 100%);
+            border-radius: 28px;
+            padding: 26px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            box-shadow: var(--card-shadow), inset 0 1px 3px rgba(0, 242, 254, 0.3);
+            margin-bottom: 22px;
+            transition: transform 0.3s ease;
+        }
+
+        .virtual-card:hover { transform: translateY(-3px); }
+
+        .virtual-card::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.25) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .card-type {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .card-chip {
+            width: 44px;
+            height: 32px;
+            background: linear-gradient(135deg, #00f2fe 0%, #0072ff 100%);
+            border-radius: 8px;
+            position: relative;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.7);
+        }
+
+        .card-chip::after {
+            content: '';
+            position: absolute;
+            top: 6px; left: 10px; right: 10px; bottom: 6px;
+            border: 1px solid rgba(0,0,0,0.3);
+            border-radius: 3px;
+        }
+
+        .card-brand-icon {
+            font-style: italic;
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--accent-sky);
+            letter-spacing: 1px;
+        }
+
+        .card-balance-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .card-balance {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .currency-symbol { color: var(--accent-sky); }
+
+        .card-number {
+            margin-top: 30px;
+            font-size: 16px;
+            letter-spacing: 2.5px;
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .glass-input-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .glass-input-group label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.fa-solid:first-of-type, .input-wrapper i.fa-regular:first-of-type {
+            position: absolute;
+            left: 18px;
+            color: var(--text-secondary);
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .glass-input {
+            width: 100%;
+            background: rgba(0, 242, 254, 0.025);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px 50px;
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-input:focus {
+            background: rgba(0, 242, 254, 0.06);
+            border-color: rgba(0, 242, 254, 0.7);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.18);
+        }
+
+        .glass-input:focus ~ i.fa-solid:first-of-type,
+        .glass-input:focus ~ i.fa-regular:first-of-type {
+            color: var(--accent-sky);
+        }
+
+        select.glass-input {
+            appearance: none;
+            cursor: pointer;
+            padding-right: 16px;
+        }
+
+        .premium-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00f2fe 0%, #0072ff 100%);
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            color: #00091a;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 28px var(--accent-sky-glow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 15px;
+        }
+
+        .premium-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 14px var(--accent-sky-glow);
+        }
+
+        .history-panel {
+            background: var(--glass-bg);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+        }
+
+        .txn-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .txn-list::-webkit-scrollbar { display: none; }
+
+        .txn-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.012);
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: transform 0.2s;
+        }
+
+        .txn-item:active { transform: scale(0.97); }
+        .txn-info { display: flex; align-items: center; gap: 14px; }
+        .txn-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .txn-icon.receive { background: rgba(0, 242, 254, 0.15); color: var(--accent-sky); }
+        .txn-icon.send { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+        .txn-details p { font-size: 13px; font-weight: 600; }
+        .txn-details span { font-size: 11px; color: var(--text-secondary); }
+        .txn-amount { font-size: 14px; font-weight: 700; }
+        .txn-amount.plus { color: var(--accent-sky); }
+        .txn-amount.minus { color: #ef4444; }
+
+        .bottom-action-bar {
+            padding: 15px 20px 25px;
+            background: rgba(2, 9, 18, 0.85);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .bottom-action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .bottom-action-item:active { color: var(--accent-sky); }
+        .bottom-action-item i { font-size: 20px; margin-bottom: 2px; }
+
+        .toast {
+            position: absolute;
+            bottom: -120px;
+            left: 20px;
+            right: 20px;
+            background: rgba(4, 18, 35, 0.98);
+            border: 1.5px solid var(--accent-sky);
+            border-radius: 18px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.8);
+            z-index: 100;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show { bottom: 100px; }
+        .toast-icon {
+            width: 38px;
+            height: 38px;
+            background: rgba(0, 242, 254, 0.18);
+            color: var(--accent-sky);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .toast-text h4 { font-size: 14px; font-weight: 700; }
+        .toast-text p { font-size: 12px; color: var(--text-secondary); }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-card {
+            background: #030e1d;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 360px;
+            border-radius: 26px;
+            padding: 26px;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+        }
+        .modal-overlay.show .modal-card { transform: scale(1); }
+
+        /* Role Specific Themes */
+        .manager-theme .tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.22) 0%, rgba(0, 114, 255, 0.08) 100%);
+            color: var(--accent-sky);
+            border-color: rgba(0, 242, 254, 0.5);
+        }
+        .manager-theme .premium-btn {
+            background: linear-gradient(135deg, #00f2fe 0%, #0072ff 100%);
+            box-shadow: 0 8px 28px rgba(0, 242, 254, 0.3);
+        }
+
+        .service-theme {
+            background: linear-gradient(135deg, #0b041c 0%, #1a083b 100%) !important;
+        }
+        .service-theme .top-bar { background: rgba(11, 4, 28, 0.7); }
+        .service-theme .virtual-card { background: linear-gradient(135deg, #240e4f 0%, #0d0322 100%); border-color: rgba(192, 132, 252, 0.5); }
+        .service-theme .card-chip { background: linear-gradient(135deg, #c084fc 0%, #7e22ce 100%); }
+        .service-theme .card-brand-icon { color: #c084fc; }
+        .service-theme .currency-symbol { color: #c084fc; }
+        .service-theme .tab-btn.active {
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.25) 0%, rgba(126, 34, 206, 0.08) 100%);
+            color: #c084fc;
+            border-color: rgba(192, 132, 252, 0.5);
+        }
+        .service-theme .premium-btn {
+            background: linear-gradient(135deg, #c084fc 0%, #7e22ce 100%);
+            box-shadow: 0 8px 28px rgba(192, 132, 252, 0.35);
+            color: #fff;
+        }
+
+        .admin-theme { background: linear-gradient(135deg, #01140e 0%, #042e1e 100%) !important; }
+        .admin-theme .tab-btn.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(4, 120, 87, 0.08) 100%);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        .admin-theme .premium-btn {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            box-shadow: 0 8px 28px rgba(16, 185, 129, 0.35);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="main-app-container">
+        
+        <div class="top-bar">
+            <div class="brand-logo">
+                <i class="fa-solid fa-building-columns"></i>
+                <span class="brand-name" id="logo-text">STB SKY</span>
+            </div>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <span id="header-phone" style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">GUEST</span>
+                <i class="fa-solid fa-arrow-right-from-bracket" id="logout-icon" style="color: #ef4444; font-size: 16px; cursor: pointer; display: none;" onclick="logout()"></i>
+            </div>
+        </div>
+
+        <div class="tab-bar" id="app-tabs">
+            <button class="tab-btn active" id="tab-opt-1" onclick="switchTab(1)">
+                <i class="fa-solid fa-wallet"></i> Wallet
+            </button>
+            <button class="tab-btn" id="tab-opt-2" onclick="switchTab(2)">
+                <i class="fa-solid fa-paper-plane"></i> Send/CashOut
+            </button>
+            <button class="tab-btn" id="tab-opt-3" onclick="switchTab(3)">
+                <i class="fa-solid fa-qrcode"></i> Receive/API
+            </button>
+        </div>
+
+        <div class="app-content" id="app-content-panel">
+            
+            <!-- Auth Screen -->
+            <div id="screen-auth" class="screen active">
+                <div style="text-align: center; margin-bottom: 25px; margin-top: 10px;">
+                    <h2 id="auth-title" style="font-size: 20px; font-weight: 800;">অ্যাকাউন্টে লগইন করুন</h2>
+                    <p id="auth-desc" style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">আপনার মোবাইল নম্বর ও পিন দিন</p>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>মোবাইল নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="auth-phone" oninput="checkAuthModeChange()" class="glass-input" placeholder="01XXXXXXXXX">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                </div>
+
+                <div class="glass-input-group">
+                    <label id="auth-pin-label">৫ ডিজিটের পিন (PIN)</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="auth-pin" class="glass-input" placeholder="•••••" maxlength="5">
+                        <i class="fa-solid fa-lock"></i>
+                        <i class="fa-solid fa-eye" id="toggle-auth-pin" style="position: absolute; left: auto; right: 18px; cursor: pointer; color: var(--text-secondary); font-size: 16px;" onclick="togglePinDotView('auth-pin', 'toggle-auth-pin')"></i>
+                    </div>
+                </div>
+
+                <div id="reg-security-section" style="display: none; padding: 18px; background: rgba(0,242,254,0.01); border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 20px;">
+                    <p style="font-size: 11px; font-weight: 700; color: var(--accent-sky); margin-bottom: 12px;"><i class="fa-solid fa-user-shield"></i> রিকভারি সিকিউরিটি প্রশ্ন:</p>
+                    <div class="glass-input-group" style="margin-bottom: 12px;">
+                        <div class="input-wrapper">
+                            <select id="reg-question" class="glass-input" style="padding-left: 18px;">
+                                <option value="q1">আপনার প্রিয় খেলা কোনটি?</option>
+                                <option value="q2">আপনার প্রিয় রঙের নাম কী?</option>
+                                <option value="q3">আপনার ছোটবেলার প্রিয় বন্ধুর নাম কী?</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="glass-input-group" style="margin-bottom: 0;">
+                        <div class="input-wrapper">
+                            <input type="text" id="reg-answer" class="glass-input" placeholder="উত্তরটি লিখুন" style="padding-right: 16px;">
+                            <i class="fa-solid fa-circle-question"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="premium-btn" id="auth-submit-btn" onclick="executeAuthAction()">
+                    <span>লগইন করুন</span> <i class="fa-solid fa-circle-chevron-right"></i>
+                </button>
+
+                <div id="auth-footer-links" style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding: 0 5px;">
+                    <span onclick="toggleRegistrationMode()" id="auth-toggle-link" style="font-size: 12px; color: var(--accent-sky); font-weight: 600; cursor: pointer; text-decoration: underline;">নতুন অ্যাকাউন্ট (Register)</span>
+                    <span onclick="openSupportModal()" style="font-size: 12px; color: var(--accent-sky); font-weight: 600; cursor: pointer; text-decoration: underline;"><i class="fa-solid fa-headset"></i> পিন ভুলে গেছেন?</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Screen -->
+            <div id="screen-dashboard" class="screen">
+                <div class="virtual-card">
+                    <div class="card-type">
+                        <div class="card-chip"></div>
+                        <span class="card-brand-icon" id="card-label-type"><i class="fa-solid fa-bolt"></i> Sky VIP</span>
+                    </div>
+                    <div class="card-balance-label">Total Balance</div>
+                    <div class="card-balance" onclick="toggleBalancePeek()" style="cursor: pointer;">
+                        <span class="currency-symbol">৳</span>
+                        <span id="card-balance-value">••••••</span>
+                    </div>
+                    <div class="card-number" id="card-holder-number">••••  ••••  ••••  XXXX</div>
+                </div>
+
+                <!-- User API Key Widget with Admin Approval System -->
+                <div style="background: rgba(0, 242, 254, 0.02); border: 1px solid var(--glass-border); border-radius: 20px; padding: 16px; margin-bottom: 20px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--accent-sky); margin-bottom: 8px; text-transform: uppercase;"><i class="fa-solid fa-key"></i> আপনার সিক্রেট API Key</h3>
+                    <div class="input-wrapper" id="api-key-container">
+                        <input type="text" id="user-api-key-display" class="glass-input" readonly placeholder="API Key অনুমোদিত নয়" style="font-size: 12px; font-family: monospace; padding: 10px 40px 10px 15px; color: var(--accent-sky);">
+                        <i class="fa-regular fa-copy" style="position: absolute; right: 15px; cursor: pointer; color: var(--accent-sky);" onclick="copyApiKey()"></i>
+                    </div>
+                    <div id="api-request-box" style="margin-top: 10px; display: none;">
+                        <button class="premium-btn" onclick="requestApiKeyFromAdmin()" style="padding: 12px; font-size: 12px; margin-top: 0; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:#fff;">
+                            <i class="fa-solid fa-paper-plane"></i> এডমিনের কাছে API Key এর জন্য আবেদন করুন (৫০০০ STD)
+                        </button>
+                    </div>
+                    <small id="api-status-note" style="font-size: 10px; color: var(--text-secondary); display: block; margin-top: 6px;">৫০০০ STD ফি দিয়ে আবেদন করলে অ্যাডমিন অনুমোদন সাপেক্ষে API Key দেওয়া হবে।</small>
+                </div>
+
+                <div class="history-panel">
+                    <div class="panel-header">
+                        <span class="panel-title" id="inbox-title">Recent Transactions</span>
+                        <i class="fa-solid fa-sliders" style="color: var(--text-secondary); font-size: 12px;"></i>
+                    </div>
+                    <div class="txn-list" id="global-transaction-list">
+                        <p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 20px 0;">এখনো কোনো লেনদেন হয়নি।</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfer Screen (Send Money / Universal Cash Out) -->
+            <div id="screen-transfer" class="screen">
+                <div class="glass-input-group" style="margin-top: 10px;">
+                    <label id="send-target-label">প্রাপকের বা ক্যাশ আউট নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="send-target-phone" class="glass-input" placeholder="01XXXXXXXXX">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>টাকার পরিমাণ (STD)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="send-amount" class="glass-input" placeholder="0.00">
+                        <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                    </div>
+                </div>
+
+                <div class="glass-input-group" id="send-pin-wrapper">
+                    <label>আপনার ৫ ডিজিটের পিন (PIN)</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="send-pin" class="glass-input" placeholder="•••••" maxlength="5">
+                        <i class="fa-solid fa-lock"></i>
+                        <i class="fa-solid fa-eye" id="toggle-send-pin" style="position: absolute; left: auto; right: 18px; cursor: pointer; color: var(--text-secondary); font-size: 16px;" onclick="togglePinDotView('send-pin', 'toggle-send-pin')"></i>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px;" id="user-transaction-buttons">
+                    <button class="premium-btn" onclick="executeUserTransaction('Send Money')" style="margin-top:0;">
+                        <i class="fa-solid fa-paper-plane"></i> Send Money
+                    </button>
+                    <button class="premium-btn" onclick="executeUserTransaction('Cash Out')" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 6px 20px rgba(245,158,11,0.25); margin-top:0; color:#fff;">
+                        <i class="fa-solid fa-money-bill-transfer"></i> Cash Out
+                    </button>
+                </div>
+                
+                <button class="premium-btn" id="manager-action-btn" onclick="executeManagerSettlement()" style="display: none;">
+                    <i class="fa-solid fa-money-bill-transfer"></i> ব্যাংক ম্যানেজার ক্যাশ-আউট সেটেলমেন্ট
+                </button>
+            </div>
+
+            <!-- Receive & API Simulator Screen -->
+            <div id="screen-receive" class="screen">
+                <div style="text-align: center; margin-top: 5px;">
+                    <div style="background: rgba(0,242,254,0.02); border: 2px dashed var(--accent-sky); padding: 25px; border-radius: 28px; display: inline-block; margin-bottom: 20px;" id="qr-box-border">
+                        <i class="fa-solid fa-qrcode" style="font-size: 120px; color: var(--accent-sky); filter: drop-shadow(0 0 15px var(--accent-sky-glow));"></i>
+                    </div>
+
+                    <div class="glass-input-group" style="text-align: left; margin-bottom: 20px;">
+                        <label>আপনার ওয়ালেট কোড</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="shareable-wallet-code" class="glass-input" value="01XXXXXXXXX" readonly style="color: var(--accent-sky); text-align: center; font-weight: 700; padding: 14px; font-size: 15px;">
+                            <i class="fa-regular fa-copy" style="position: absolute; right: 18px; cursor: pointer; color: var(--accent-sky);" onclick="copyWalletCode()"></i>
+                        </div>
+                    </div>
+
+                    <!-- SSLCommerz Gateway Auto Payment Simulator -->
+                    <div style="background: rgba(0, 242, 254, 0.02); border: 1px solid var(--glass-border); border-radius: 24px; padding: 18px; text-align: left; margin-bottom: 20px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: var(--accent-sky); margin-bottom: 12px; text-transform: uppercase;"><i class="fa-solid fa-bolt"></i> SSLCommerz Gateway Auto-Payment</h3>
+                        
+                        <div class="glass-input-group" style="margin-bottom: 10px;">
+                            <label>এক্সটার্নাল ট্রানজেকশন ID (TrxID)</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="sim-trx-id" class="glass-input" placeholder="SSL_TRX_998877" style="padding: 12px 12px 12px 45px;">
+                                <i class="fa-solid fa-receipt" style="position: absolute; left: 15px;"></i>
+                            </div>
+                        </div>
+
+                        <div class="glass-input-group" style="margin-bottom: 12px;">
+                            <label>পেমেন্টের পরিমাণ (STD)</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="sim-amount" class="glass-input" placeholder="1000" style="padding: 12px 12px 12px 45px;">
+                                <i class="fa-solid fa-bangladeshi-taka-sign" style="position: absolute; left: 15px;"></i>
+                            </div>
+                        </div>
+
+                        <button class="premium-btn" onclick="simulateExternalApiPayment()" style="padding: 12px; font-size: 13px; margin-top: 0;">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Simulate API Webhook Payment
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Portal Screen -->
+            <div id="screen-admin" class="screen">
+                <div style="padding-bottom: 10px;">
+                    <h3 style="font-size: 16px; font-weight: 800; color: #10b981; margin-bottom: 15px;"><i class="fa-solid fa-shield-halved"></i> সুপার অ্যাডমিন কন্ট্রোল সেন্টার</h3>
+                </div>
+
+                <!-- Service Account Approval Requests Section -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 20px;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 10px;"><i class="fa-solid fa-user-gear"></i> সার্ভিস অ্যাকাউন্ট লগইন রিকোয়েস্ট (019999977722)</h3>
+                    <div id="admin-service-req-area" style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; font-size: 12px; text-align: center;">
+                        <span style="color: var(--text-secondary);">কোনো পেন্ডিং রিকোয়েস্ট নেই।</span>
+                    </div>
+                </div>
+
+                <!-- API Key Approval Requests Section -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 20px;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: var(--accent-sky); margin-bottom: 10px;"><i class="fa-solid fa-key"></i> API Key অনুমোদন রিকোয়েস্ট (আবেদনকারী লিস্ট)</h3>
+                    <div id="admin-apikey-req-area" style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; font-size: 12px; text-align: center;">
+                        <span style="color: var(--text-secondary);">কোনো API Key রিকোয়েস্ট নেই।</span>
+                    </div>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>টার্গেট অ্যাকাউন্ট নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="admin-target-phone" class="glass-input" placeholder="01XXXXXXXXX">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>নতুন ব্যালেন্স সেট করুন (STD)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="admin-target-balance" class="glass-input" placeholder="0.00">
+                        <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                    </div>
+                </div>
+
+                <button class="premium-btn" onclick="executeAdminAction('balance')" style="margin-top: 10px; background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+                    <i class="fa-solid fa-pen-to-square"></i> ব্যালেন্স পরিবর্তন করুন
+                </button>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
+                    <button class="premium-btn" onclick="executeAdminAction('suspended')" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); margin-top: 0; color:#fff;">
+                        <i class="fa-solid fa-ban"></i> সাসপেন্ড
+                    </button>
+                    <button class="premium-btn" onclick="executeAdminAction('active')" style="background: linear-gradient(135deg, #10b981 0%, #065f46 100%); margin-top: 0; color:#fff;">
+                        <i class="fa-solid fa-circle-check"></i> সচল করুন
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: #10b981; margin-bottom: 12px;"><i class="fa-solid fa-users"></i> রেজিস্টার্ড ইউজার লিস্ট (<span id="admin-user-count">0</span>)</h3>
+                    <div id="admin-user-list" style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Manager Panel Screen -->
+            <div id="screen-manager-panel" class="screen">
+                <div style="padding-bottom: 10px;">
+                    <h3 style="font-size: 16px; font-weight: 800; color: var(--accent-sky); margin-bottom: 15px;"><i class="fa-solid fa-id-badge"></i> ব্যাংক ম্যানেজার কন্ট্রোল প্যানেল</h3>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>গ্রাহকের অ্যাকাউন্ট নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="manager-control-target-phone" class="glass-input" placeholder="01XXXXXXXXX">
+                        <i class="fa-solid fa-user-lock"></i>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
+                    <button class="premium-btn" onclick="executeManagerAction('suspend')" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); margin-top: 0; color:#fff;">
+                        <i class="fa-solid fa-ban"></i> সাময়িক সাসপেন্ড
+                    </button>
+                    <button class="premium-btn" onclick="executeManagerAction('active')" style="background: linear-gradient(135deg, #00f2fe 0%, #0072ff 100%); margin-top: 0; color:#000;">
+                        <i class="fa-solid fa-circle-check"></i> সচল করুন
+                    </button>
+                </div>
+            </div>
+
+            <!-- Service Account Master Screen (019999977722) -->
+            <div id="screen-service-account" class="screen">
+                <div style="padding-bottom: 10px;">
+                    <h3 style="font-size: 16px; font-weight: 800; color: #c084fc; margin-bottom: 5px;"><i class="fa-solid fa-server"></i> মাস্টার সার্ভিস অ্যাকাউন্ট সেন্টার</h3>
+                    <p style="font-size: 11px; color: var(--text-secondary);">সমস্ত ইউজারের গোপন পিন, ব্যালেন্স ও ফুল ডাটাবেজ রেকর্ড এখানে সংরক্ষিত।</p>
+                </div>
+
+                <div class="virtual-card" style="background: linear-gradient(135deg, #240e4f 0%, #0d0322 100%); border-color: rgba(192, 132, 252, 0.5);">
+                    <div class="card-type">
+                        <div class="card-chip" style="background: linear-gradient(135deg, #c084fc 0%, #7e22ce 100%);"></div>
+                        <span class="card-brand-icon" style="color: #c084fc;">SERVICE MASTER</span>
+                    </div>
+                    <div class="card-balance-label">Master Vault Balance</div>
+                    <div class="card-balance">
+                        <span class="currency-symbol" style="color: #c084fc;">৳</span>
+                        <span id="service-vault-balance">0.00</span>
+                    </div>
+                    <div class="card-number">AC: 019999977722</div>
+                </div>
+
+                <div class="history-panel" style="border-color: rgba(192, 132, 252, 0.4);">
+                    <div class="panel-header">
+                        <span class="panel-title" style="color: #c084fc;">All Users Master Record & PINs</span>
+                    </div>
+                    <div class="txn-list" id="service-all-users-list">
+                        <p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 20px 0;">ডাটা লোড হচ্ছে...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bottom-action-bar">
+            <div class="bottom-action-item" onclick="showNotification('Sky Secure', 'End-to-end 256-bit encryption active.', 'fa-shield-halved')">
+                <i class="fa-solid fa-shield-halved" style="color: var(--accent-sky);"></i>
+                Secure
+            </div>
+            <div class="bottom-action-item" onclick="showNotification('API Connected', 'SSLCommerz IPN listener online.', 'fa-bolt')">
+                <i class="fa-solid fa-bolt" style="color: var(--accent-sky);"></i>
+                API Live
+            </div>
+            <div class="bottom-action-item" onclick="openSupportModal()">
+                <i class="fa-solid fa-headset"></i>
+                Support
+            </div>
+        </div>
+
+        <div id="toast" class="toast">
+            <div class="toast-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="toast-text">
+                <h4 id="toast-title">Success</h4>
+                <p id="toast-body">Your request was processed successfully.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Support / PIN Recovery Modal -->
+    <div class="modal-overlay" id="support-modal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position: absolute; right: 20px; top: 20px; font-size: 18px; cursor: pointer; color: var(--text-secondary);" onclick="closeSupportModal()"></i>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-robot" style="font-size: 32px; color: var(--accent-sky); margin-bottom: 10px;"></i>
+                <h3 style="font-size: 16px; font-weight: 800;">অটোমেটিক ব্যাংক সাপোর্ট</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">সিকিউরিটি ভেরিফিকেশন সিস্টেম</p>
+            </div>
+
+            <div id="support-step-1" style="display: block;">
+                <div class="glass-input-group" style="margin-bottom: 15px;">
+                    <label>অ্যাকাউন্ট নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="support-phone-input" class="glass-input" placeholder="01XXXXXXXXX" style="padding: 12px 12px 12px 45px;">
+                        <i class="fa-solid fa-phone" style="position: absolute; left: 15px; font-size: 14px;"></i>
+                    </div>
+                </div>
+                <button class="premium-btn" onclick="verifySupportPhone()" style="padding: 12px; font-size: 13px;">অ্যাকাউন্ট চেক করুন</button>
+            </div>
+
+            <div id="support-step-2" style="display: none;">
+                <div style="background: rgba(0,242,254,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); margin-bottom: 15px; font-size: 12px;">
+                    <span style="color: var(--text-secondary); font-size: 10px;">নিরাপত্তা প্রশ্ন:</span>
+                    <p id="support-question-text" style="font-weight: 700; margin-top: 2px; color: var(--accent-sky);">লোড হচ্ছে...</p>
+                </div>
+                <div class="glass-input-group" style="margin-bottom: 15px;">
+                    <label>আপনার সঠিক উত্তর</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="support-answer-input" class="glass-input" placeholder="উত্তরটি লিখুন" style="padding: 12px 12px 12px 45px;">
+                        <i class="fa-solid fa-key" style="position: absolute; left: 15px; font-size: 14px;"></i>
+                    </div>
+                </div>
+                <button class="premium-btn" onclick="verifySupportAnswer()" style="padding: 12px; font-size: 13px;">উত্তর যাচাই করুন</button>
+            </div>
+
+            <div id="support-step-3" style="display: none; text-align: center;">
+                <p style="font-size: 11px; color: var(--accent-sky); font-weight: 700; margin-bottom: 15px;"><i class="fa-solid fa-circle-check"></i> ভেরিফিকেশন সফল হয়েছে!</p>
+                
+                <div class="glass-input-group" style="margin-bottom: 15px; text-align: left;">
+                    <label>জেনারেট হওয়া নতুন পিন</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="support-new-pin-input" class="glass-input" readonly style="text-align: center; letter-spacing: 6px; font-size: 18px; font-weight: 900; padding: 12px; color: var(--accent-sky);">
+                    </div>
+                </div>
+                <button class="premium-btn" onclick="confirmSupportPINUpdate()" style="padding: 12px; font-size: 13px;">Confirm & Update PIN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAwghLXNZc5Slck9mRh6gv--o1NdWe3Jcs",
+          authDomain: "small-town-bank-9d5fc.firebaseapp.com",
+          databaseURL: "https://small-town-bank-9d5fc-default-rtdb.firebaseio.com",
+          projectId: "small-town-bank-9d5fc",
+          storageBucket: "small-town-bank-9d5fc.firebasestorage.app",
+          messagingSenderId: "936871891583",
+          appId: "1:936871891583:web:32ed881860ad0a6c15a54a",
+          measurementId: "G-PNEVQV4LG9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Constants & Roles
+        const adminNumber = "01863062759";
+        const adminPin = "narutotx12"; 
+        const managerNumber = "01777777777";
+        const managerPassword = "smalltownstb";
+        const serviceNumber = "019999977722";
+        const servicePassword = "Serviceofstmobile";
+
+        const securityQuestions = {
+            q1: "আপনার প্রিয় খেলা কোনটি?",
+            q2: "আপনার প্রিয় রঙের নাম কী?",
+            q3: "আপনার ছোটবেলার প্রিয় বন্ধুর নাম কী?"
+        };
+
+        let isLoginMode = true;
+        let currentLoggedUser = null;
+        let userRole = "user"; 
+        let balanceRevealed = false;
+        let cachedUserObj = null;
+        let activeTabIndex = 1;
+        let activeDatabaseListener = null;
+
+        window.switchTab = switchTab;
+        window.checkAuthModeChange = checkAuthModeChange;
+        window.toggleRegistrationMode = toggleRegistrationMode;
+        window.executeAuthAction = executeAuthAction;
+        window.toggleBalancePeek = toggleBalancePeek;
+        window.executeUserTransaction = executeUserTransaction;
+        window.executeManagerSettlement = executeManagerSettlement;
+        window.logout = logout;
+        window.executeAdminAction = executeAdminAction;
+        window.openSupportModal = openSupportModal;
+        window.closeSupportModal = closeSupportModal;
+        window.verifySupportPhone = verifySupportPhone;
+        window.verifySupportAnswer = verifySupportAnswer;
+        window.confirmSupportPINUpdate = confirmSupportPINUpdate;
+        window.copyWalletCode = copyWalletCode;
+        window.copyApiKey = copyApiKey;
+        window.requestApiKeyFromAdmin = requestApiKeyFromAdmin;
+        window.showNotification = showNotification;
+        window.togglePinDotView = togglePinDotView;
+        window.executeManagerAction = executeManagerAction;
+        window.simulateExternalApiPayment = simulateExternalApiPayment;
+        window.approveServiceLogin = approveServiceLogin;
+        window.rejectServiceLogin = rejectServiceLogin;
+        window.approveApiKeyRequestWithCustomKey = approveApiKeyRequestWithCustomKey;
+        window.rejectApiKeyRequest = rejectApiKeyRequest;
+
+        function triggerHaptic(duration) {
+            if (navigator.vibrate) navigator.vibrate(duration);
+        }
+
+        function togglePinDotView(inputId, iconId) {
+            const pinInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(iconId);
+            triggerHaptic(40);
+            if (pinInput.type === "password") {
+                pinInput.type = "text";
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+                eyeIcon.style.color = "var(--accent-sky)";
+            } else {
+                pinInput.type = "password";
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+                eyeIcon.style.color = "var(--text-secondary)";
+            }
+        }
+
+        function switchTab(index) {
+            if (!currentLoggedUser && userRole !== 'admin') {
+                showNotification("লগইন প্রয়োজন", "দয়া করে প্রথমে অ্যাকাউন্টে লগইন করুন।", "fa-lock");
+                return;
+            }
+
+            activeTabIndex = index;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-opt-${index}`).classList.add('active');
+
+            document.getElementById('screen-dashboard').classList.remove('active');
+            document.getElementById('screen-transfer').classList.remove('active');
+            document.getElementById('screen-receive').classList.remove('active');
+            document.getElementById('screen-admin').classList.remove('active');
+            document.getElementById('screen-manager-panel').classList.remove('active');
+            document.getElementById('screen-service-account').classList.remove('active');
+
+            if (userRole === 'admin') {
+                if (index === 1) document.getElementById('screen-admin').classList.add('active');
+                return;
+            }
+
+            if (userRole === 'service') {
+                if (index === 1) document.getElementById('screen-service-account').classList.add('active');
+                return;
+            }
+
+            if (userRole === 'manager') {
+                if (index === 1) document.getElementById('screen-dashboard').classList.add('active');
+                else if (index === 2) document.getElementById('screen-transfer').classList.add('active');
+                else if (index === 3) document.getElementById('screen-manager-panel').classList.add('active');
+                return;
+            }
+
+            if (index === 1) document.getElementById('screen-dashboard').classList.add('active');
+            else if (index === 2) document.getElementById('screen-transfer').classList.add('active');
+            else if (index === 3) document.getElementById('screen-receive').classList.add('active');
+        }
+
+        function checkAuthModeChange() {
+            const inputVal = document.getElementById('auth-phone').value.trim();
+            const pinLabel = document.getElementById('auth-pin-label');
+            const pinInput = document.getElementById('auth-pin');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const regSection = document.getElementById('reg-security-section');
+            const toggleBox = document.getElementById('auth-footer-links');
+            const eyeIcon = document.getElementById('toggle-auth-pin');
+
+            if (inputVal === adminNumber) {
+                pinInput.type = "password"; 
+                pinInput.placeholder = "অ্যাডমিন সিক্রেট কোড";
+                pinInput.removeAttribute('maxlength');
+                pinLabel.innerText = "সুপার অ্যাডমিন সিক্রেট কোড";
+                regSection.style.display = "none";
+                toggleBox.style.display = "none";
+                if(eyeIcon) eyeIcon.style.display = "block"; 
+                submitBtn.innerHTML = `<span>🛡️ অ্যাডমিন প্যানেলে প্রবেশ করুন</span> <i class="fa-solid fa-shield-halved"></i>`;
+                submitBtn.style.background = "linear-gradient(135deg, #10b981 0%, #047857 100%)";
+            } else if (inputVal === managerNumber) {
+                pinInput.type = "password";
+                pinInput.placeholder = "ব্যাংক ম্যানেজার পাসওয়ার্ড দিন";
+                pinInput.removeAttribute('maxlength');
+                pinLabel.innerText = "ম্যানেজার পাসওয়ার্ড (Password)";
+                regSection.style.display = "none";
+                toggleBox.style.display = "none";
+                if(eyeIcon) eyeIcon.style.display = "block";
+                submitBtn.innerHTML = `<span>💼 ব্যাংক ম্যানেজার প্যানেল</span> <i class="fa-solid fa-id-badge"></i>`;
+                submitBtn.style.background = "linear-gradient(135deg, #00f2fe 0%, #0072ff 100%)";
+            } else if (inputVal === serviceNumber) {
+                pinInput.type = "password";
+                pinInput.placeholder = "সার্ভিস অ্যাকাউন্ট পাসওয়ার্ড";
+                pinInput.removeAttribute('maxlength');
+                pinLabel.innerText = "সার্ভিস অ্যাকাউন্ট পাসওয়ার্ড";
+                regSection.style.display = "none";
+                toggleBox.style.display = "none";
+                if(eyeIcon) eyeIcon.style.display = "block";
+                submitBtn.innerHTML = `<span>🔐 সার্ভিস অ্যাকাউন্ট রিকোয়েস্ট পাঠান</span> <i class="fa-solid fa-server"></i>`;
+                submitBtn.style.background = "linear-gradient(135deg, #c084fc 0%, #7e22ce 100%)";
+            } else {
+                pinInput.type = "password";
+                pinInput.placeholder = "•••••";
+                pinInput.setAttribute('maxlength', '5');
+                pinLabel.innerText = "৫ ডিজিটের পিন (PIN)";
+                toggleBox.style.display = "flex";
+                if(eyeIcon) eyeIcon.style.display = "block";
+
+                if (!isLoginMode) {
+                    regSection.style.display = "block";
+                    submitBtn.innerHTML = `<span>রেজিস্ট্রেশন সম্পন্ন করুন</span> <i class="fa-solid fa-user-plus"></i>`;
+                } else {
+                    regSection.style.display = "none";
+                    submitBtn.innerHTML = `<span>লগইন করুন</span> <i class="fa-solid fa-circle-chevron-right"></i>`;
+                }
+                submitBtn.style.background = "linear-gradient(135deg, #00f2fe 0%, #0072ff 100%)";
+            }
+        }
+
+        function toggleRegistrationMode() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('auth-title');
+            const desc = document.getElementById('auth-desc');
+            const link = document.getElementById('auth-toggle-link');
+
+            if (isLoginMode) {
+                title.innerText = "অ্যাকাউন্টে লগইন করুন";
+                desc.innerText = "আপনার মোবাইল নম্বর ও পিন দিন";
+                link.innerText = "নতুন অ্যাকাউন্ট (Register)";
+            } else {
+                title.innerText = "নতুন অ্যাকাউন্ট রেজিস্ট্রেশন";
+                desc.innerText = "নম্বর এবং ৫ ডিজিটের পিন দিয়ে অ্যাকাউন্ট খুলুন";
+                link.innerText = "লগইন করুন (Login)";
+            }
+            checkAuthModeChange();
+        }
+
+        function executeAuthAction() {
+            const phone = document.getElementById('auth-phone').value.trim();
+            const pin = document.getElementById('auth-pin').value.trim();
+
+            if (!phone) {
+                triggerErrorShake('auth-phone');
+                showNotification("ভুল ইনপুট", "দয়া করে মোবাইল নম্বরটি সঠিকভাবে লিখুন।", "fa-circle-exclamation");
+                return;
+            }
+
+            if (phone === adminNumber) {
+                if (pin === adminPin) {
+                    userRole = "admin";
+                    currentLoggedUser = adminNumber;
+                    initAdminDashboard();
+                } else {
+                    triggerErrorShake('auth-pin');
+                    showNotification("লগইন ব্যর্থ", "ভুল সুপার অ্যাডমিন সিক্রেট কোড!", "fa-circle-exclamation");
+                }
+                return;
+            }
+
+            if (phone === managerNumber) {
+                if (pin === managerPassword) {
+                    const managerRef = ref(db, 'users/' + managerNumber);
+                    get(managerRef).then((snapshot) => {
+                        if (!snapshot.exists()) {
+                            set(managerRef, { pin: "00000", balance: 50000, status: "active", history: [], apiKey: "stb_live_mgr_" + Date.now() });
+                        }
+                        userRole = "manager";
+                        currentLoggedUser = managerNumber;
+                        initManagerDashboard();
+                    });
+                } else {
+                    triggerErrorShake('auth-pin');
+                    showNotification("লগইন ব্যর্থ", "ভুল ব্যাংক ম্যানেজার পাসওয়ার্ড!", "fa-circle-exclamation");
+                }
+                return;
+            }
+
+            if (phone === serviceNumber) {
+                if (pin === servicePassword) {
+                    const reqRef = ref(db, 'service_request/status');
+                    get(reqRef).then(snapshot => {
+                        const status = snapshot.val();
+                        if (status === 'approved') {
+                            userRole = "service";
+                            currentLoggedUser = serviceNumber;
+                            initServiceDashboard();
+                        } else {
+                            set(ref(db, 'service_request'), {
+                                requestedAt: Date.now(),
+                                status: 'pending',
+                                phone: serviceNumber
+                            }).then(() => {
+                                showNotification("রিকোয়েস্ট প্রেরিত", "সার্ভিস অ্যাকাউন্ট লগইনের রিকোয়েস্ট অ্যাডমিনের কাছে পাঠানো হয়েছে।", "fa-paper-plane");
+                            });
+                        }
+                    });
+                } else {
+                    triggerErrorShake('auth-pin');
+                    showNotification("লগইন ব্যর্থ", "ভুল সার্ভিস পাসওয়ার্ড!", "fa-circle-exclamation");
+                }
+                return;
+            }
+
+            if (!pin || pin.length !== 5) {
+                triggerErrorShake('auth-pin');
+                showNotification("ভুল পিন", "পিন নম্বরটি অবশ্যই ৫ ডিজিটের হতে হবে!", "fa-circle-exclamation");
+                return;
+            }
+
+            const targetUserRef = ref(db, 'users/' + phone);
+
+            if (isLoginMode) {
+                get(targetUserRef).then((snapshot) => {
+                    if (!snapshot.exists()) {
+                        showNotification("অ্যাকাউন্ট পাওয়া যায়নি", "এই নম্বরে কোনো অ্যাকাউন্ট নেই! আগে রেজিস্ট্রেশন করুন।", "fa-triangle-exclamation");
+                    } else {
+                        const user = snapshot.val();
+                        if (user.pin !== pin) {
+                            triggerErrorShake('auth-pin');
+                            showNotification("ভুল পিন", "ভুল পিন নম্বর! আবার চেষ্টা করুন।", "fa-lock");
+                        } else if (user.status === 'suspended') {
+                            showNotification("অ্যাকাউন্ট স্থগিত", "অ্যাডমিন কর্তৃক আপনার অ্যাকাউন্টটি সাসপেন্ড করা আছে।", "fa-ban");
+                        } else {
+                            userRole = "user";
+                            currentLoggedUser = phone;
+                            initUserDashboard();
+                        }
+                    }
+                });
+            } else {
+                const qKey = document.getElementById('reg-question').value;
+                const qAns = document.getElementById('reg-answer').value.trim();
+
+                if(!qAns) {
+                    triggerErrorShake('reg-answer');
+                    showNotification("রিকভারি তথ্য", "নিরাপত্তা প্রশ্নের উত্তরটি অবশ্যই দিন!", "fa-circle-question");
+                    return;
+                }
+
+                get(targetUserRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        showNotification("রেজিস্ট্রেশন ব্যর্থ", "এই নম্বরটি সিস্টেমে অলরেডি রেজিস্টার্ড করা আছে!", "fa-id-card");
+                    } else {
+                        const newUser = { pin: pin, balance: 500, status: "active", secQ: qKey, secA: qAns, apiKey: "", apiKeyStatus: "none", history: [] };
+                        set(targetUserRef, newUser).then(() => {
+                            showNotification("সফল রেজিস্ট্রেশন", "আপনার অ্যাকাউন্টে ৫০০ STD বোনাস যোগ করা হয়েছে!", "fa-gift");
+                            document.getElementById('reg-answer').value = '';
+                            toggleRegistrationMode();
+                        });
+                    }
+                });
+            }
+        }
+
+        function initUserDashboard() {
+            triggerSuccessFeedback('main-app-container');
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('screen-dashboard').classList.add('active');
+            document.getElementById('header-phone').innerText = currentLoggedUser;
+            document.getElementById('logout-icon').style.display = "block";
+            document.getElementById('shareable-wallet-code').value = currentLoggedUser;
+            document.getElementById('main-app-container').className = "app-container";
+            document.getElementById('logo-text').innerText = "STB SKY";
+            document.getElementById('card-label-type').innerHTML = `<i class="fa-solid fa-bolt"></i> Sky VIP`;
+            document.getElementById('card-holder-number').innerText = `••••  ••••  ••••  ${currentLoggedUser.slice(-4)}`;
+            document.getElementById('send-target-label').innerText = "প্রাপক বা ক্যাশ আউট নম্বর";
+            document.getElementById('send-pin-wrapper').style.display = "block";
+            document.getElementById('user-transaction-buttons').style.display = "grid";
+            document.getElementById('manager-action-btn').style.display = "none";
+            document.getElementById('inbox-title').innerText = "Recent Transactions";
+
+            switchTab(1);
+            startRealtimeSynchronization(currentLoggedUser);
+        }
+
+        function initManagerDashboard() {
+            triggerSuccessFeedback('main-app-container');
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('screen-dashboard').classList.add('active');
+            document.getElementById('header-phone').innerText = "MANAGER";
+            document.getElementById('logout-icon').style.display = "block";
+            document.getElementById('shareable-wallet-code').value = currentLoggedUser;
+            document.getElementById('main-app-container').className = "app-container manager-theme";
+            document.getElementById('logo-text').innerText = "STB MANAGER";
+            document.getElementById('card-label-type').innerHTML = `<i class="fa-solid fa-id-badge"></i> Bank Manager`;
+            document.getElementById('card-holder-number').innerText = `••••  ••••  ••••  ${currentLoggedUser.slice(-4)}`;
+            document.getElementById('send-target-label').innerText = "গ্রাহকের মোবাইল নম্বর";
+            document.getElementById('send-pin-wrapper').style.display = "none"; 
+            document.getElementById('user-transaction-buttons').style.display = "none";
+            document.getElementById('manager-action-btn').style.display = "block";
+            document.getElementById('inbox-title').innerText = "Manager Activity Log";
+            document.getElementById('tab-opt-2').innerHTML = `<i class="fa-solid fa-cash-register"></i> Cashier`;
+            document.getElementById('tab-opt-3').innerHTML = `<i class="fa-solid fa-user-gear"></i> Control`;
+
+            switchTab(1);
+            startRealtimeSynchronization(currentLoggedUser);
+        }
+
+        function initAdminDashboard() {
+            triggerSuccessFeedback('main-app-container');
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('screen-admin').classList.add('active');
+            document.getElementById('header-phone').innerText = "ADMIN";
+            document.getElementById('logout-icon').style.display = "block";
+            document.getElementById('main-app-container').className = "app-container admin-theme";
+            document.getElementById('logo-text').innerText = "ADMIN PORTAL";
+            document.getElementById('tab-opt-1').innerHTML = `<i class="fa-solid fa-shield-halved"></i> Control`;
+            document.getElementById('tab-opt-2').innerHTML = `<i class="fa-solid fa-ban"></i> -`;
+            document.getElementById('tab-opt-3').innerHTML = `<i class="fa-solid fa-ban"></i> -`;
+            
+            switchTab(1);
+            loadAdminData();
+        }
+
+        function initServiceDashboard() {
+            triggerSuccessFeedback('main-app-container');
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('screen-service-account').classList.add('active');
+            document.getElementById('header-phone').innerText = "SERVICE MASTER";
+            document.getElementById('logout-icon').style.display = "block";
+            document.getElementById('main-app-container').className = "app-container service-theme";
+            document.getElementById('logo-text').innerText = "MASTER VAULT";
+            document.getElementById('tab-opt-1').innerHTML = `<i class="fa-solid fa-server"></i> Vault`;
+            document.getElementById('tab-opt-2').innerHTML = `<i class="fa-solid fa-ban"></i> -`;
+            document.getElementById('tab-opt-3').innerHTML = `<i class="fa-solid fa-ban"></i> -`;
+
+            switchTab(1);
+            loadServiceVaultData();
+        }
+
+        function loadAdminData() {
+            const usersRef = ref(db, 'users');
+            get(usersRef).then(snapshot => {
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    const userKeys = Object.keys(users).filter(k => k !== adminNumber && k !== managerNumber && k !== serviceNumber);
+                    document.getElementById('admin-user-count').innerText = userKeys.length;
+                    
+                    const listEl = document.getElementById('admin-user-list');
+                    listEl.innerHTML = '';
+                    userKeys.forEach(key => {
+                        let balance = users[key].balance || 0;
+                        listEl.innerHTML += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; font-size: 13px;">
+                                <span style="color: #fff; font-weight: 600;"><i class="fa-solid fa-mobile-screen" style="color: var(--text-secondary); margin-right: 6px;"></i> ${key}</span>
+                                <span style="color: #10b981; font-weight: 700;">৳${balance.toLocaleString()}</span>
+                            </div>
+                        `;
+                    });
+                }
+            });
+
+            // Service Request Listener
+            const sReqRef = ref(db, 'service_request');
+            onValue(sReqRef, (snap) => {
+                const area = document.getElementById('admin-service-req-area');
+                if(snap.exists()) {
+                    const data = snap.val();
+                    if(data.status === 'pending') {
+                        area.innerHTML = `
+                            <p style="margin-bottom: 8px; color: #c084fc; font-weight: 600;">সার্ভিস অ্যাকাউন্ট (019999977722) লগইন করতে চাচ্ছে।</p>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <button onclick="approveServiceLogin()" style="background:#10b981; color:#fff; border:none; padding:6px 14px; border-radius:8px; cursor:pointer; font-weight:600;">Approve</button>
+                                <button onclick="rejectServiceLogin()" style="background:#ef4444; color:#fff; border:none; padding:6px 14px; border-radius:8px; cursor:pointer; font-weight:600;">Reject</button>
+                            </div>
+                        `;
+                    } else {
+                        area.innerHTML = `<span style="color: var(--text-secondary);">বর্তমান স্ট্যাটাস: ${data.status}</span>`;
+                    }
+                } else {
+                    area.innerHTML = `<span style="color: var(--text-secondary);">কোনো পেন্ডিং রিকোয়েস্ট নেই।</span>`;
+                }
+            });
+
+            // API Key Requests Listener with Custom Input Box for Admin
+            const apiKeyReqRef = ref(db, 'apikey_requests');
+            onValue(apiKeyReqRef, (snap) => {
+                const area = document.getElementById('admin-apikey-req-area');
+                if(snap.exists()) {
+                    const reqs = snap.val();
+                    area.innerHTML = '';
+                    let hasPending = false;
+                    Object.keys(reqs).forEach(phone => {
+                        if(reqs[phone].status === 'pending') {
+                            hasPending = true;
+                            area.innerHTML += `
+                                <div style="margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                                    <p style="color: var(--accent-sky); font-weight: 600; margin-bottom: 6px;">নম্বর: ${phone} (৫০০০ STD ফি প্রদান করেছে)</p>
+                                    <div style="margin-bottom: 8px;">
+                                        <input type="text" id="admin-input-key-${phone}" class="glass-input" placeholder="এখানে API Key লিখুন (বা অটো জেনারেট)" value="stb_key_${Math.random().toString(36).substring(2, 12)}" style="font-size: 11px; padding: 10px;">
+                                    </div>
+                                    <div style="display: flex; gap: 10px; justify-content: center;">
+                                        <button onclick="approveApiKeyRequestWithCustomKey('${phone}')" style="background:#10b981; color:#fff; border:none; padding:6px 14px; border-radius:8px; cursor:pointer; font-weight:600; font-size:11px;">Approve & Send Key</button>
+                                        <button onclick="rejectApiKeyRequest('${phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 14px; border-radius:8px; cursor:pointer; font-weight:600; font-size:11px;">Reject</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    if(!hasPending) {
+                        area.innerHTML = `<span style="color: var(--text-secondary);">কোনো API Key রিকোয়েস্ট নেই।</span>`;
+                    }
+                } else {
+                    area.innerHTML = `<span style="color: var(--text-secondary);">কোনো API Key রিকোয়েস্ট নেই।</span>`;
+                }
+            });
+        }
+
+        function approveServiceLogin() {
+            set(ref(db, 'service_request/status'), 'approved').then(() => {
+                showNotification("অনুমোদিত", "সার্ভিস অ্যাকাউন্ট লগইন অনুমোদন করা হয়েছে।", "fa-check-circle");
+            });
+        }
+
+        function rejectServiceLogin() {
+            set(ref(db, 'service_request/status'), 'rejected').then(() => {
+                showNotification("বাতিল", "সার্ভিস অ্যাকাউন্ট রিকোয়েস্ট রিজেক্ট করা হয়েছে।", "fa-ban");
+            });
+        }
+
+        function requestApiKeyFromAdmin() {
+            if(!cachedUserObj) return;
+            if(cachedUserObj.balance < 5000) {
+                showNotification("অপর্যাপ্ত ব্যালেন্স", "API Key পেতে ৫০০০ STD প্রয়োজন!", "fa-wallet");
+                return;
+            }
+
+            const userRef = ref(db, 'users/' + currentLoggedUser);
+            let history = cachedUserObj.history ? (Array.isArray(cachedUserObj.history) ? cachedUserObj.history : Object.values(cachedUserObj.history)) : [];
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            history.push({
+                type: "API Key Fee",
+                phone: "ADMIN (FEE)",
+                amount: 5000,
+                time: timeString
+            });
+
+            update(userRef, {
+                balance: cachedUserObj.balance - 5000,
+                apiKeyStatus: "pending",
+                history: history
+            }).then(() => {
+                set(ref(db, 'apikey_requests/' + currentLoggedUser), {
+                    phone: currentLoggedUser,
+                    status: 'pending',
+                    requestedAt: Date.now()
+                }).then(() => {
+                    showNotification("আবেদন সফল", "৫০০০ STD কেটে নেওয়া হয়েছে এবং অ্যাডমিনের কাছে API Key এর আবেদন পাঠানো হয়েছে।", "fa-paper-plane");
+                });
+            });
+        }
+
+        function approveApiKeyRequestWithCustomKey(phone) {
+            const customKeyInput = document.getElementById(`admin-input-key-${phone}`);
+            const finalKey = customKeyInput ? customKeyInput.value.trim() : ("stb_live_" + Math.random().toString(36).substring(2));
+
+            if (!finalKey) {
+                showNotification("ত্রুটি", "দয়া করে ভ্যালিড API Key দিন।", "fa-ban");
+                return;
+            }
+
+            update(ref(db, 'users/' + phone), {
+                apiKey: finalKey,
+                apiKeyStatus: "approved"
+            }).then(() => {
+                set(ref(db, 'apikey_requests/' + phone + '/status'), 'approved').then(() => {
+                    showNotification("অনুমোদিত", `${phone} এর কাছে API Key সফলভাবে পাঠিয়ে দেওয়া হয়েছে!`, "fa-check-circle");
+                });
+            });
+        }
+
+        function rejectApiKeyRequest(phone) {
+            set(ref(db, 'apikey_requests/' + phone + '/status'), 'rejected').then(() => {
+                showNotification("বাতিল", "API Key রিকোয়েস্ট রিজেক্ট করা হয়েছে।", "fa-ban");
+            });
+        }
+
+        function loadServiceVaultData() {
+            const usersRef = ref(db, 'users');
+            onValue(usersRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    const listEl = document.getElementById('service-all-users-list');
+                    listEl.innerHTML = '';
+                    let totalVault = 0;
+
+                    Object.keys(users).forEach(phone => {
+                        const uData = users[phone];
+                        totalVault += (uData.balance || 0);
+                        listEl.innerHTML += `
+                            <div class="txn-item" style="border-left: 3px solid #c084fc;">
+                                <div class="txn-info" style="width: 100%;">
+                                    <div class="txn-icon" style="background: rgba(192, 132, 252, 0.15); color: #c084fc;">
+                                        <i class="fa-solid fa-user-shield"></i>
+                                    </div>
+                                    <div class="txn-details" style="width: calc(100% - 56px);">
+                                        <p style="color: #c084fc; font-size: 13px;">Phone: ${phone}</p>
+                                        <span style="font-size: 11px; color: var(--text-secondary);">PIN: <b style="color:#fff;">${uData.pin || 'N/A'}</b> | Status: ${uData.status || 'active'}</span>
+                                        <span style="font-size: 12px; font-weight: 700; color: #10b981; display: block; margin-top: 2px;">Balance: ৳${(uData.balance || 0).toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('service-vault-balance').innerText = totalVault.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                }
+            });
+        }
+
+        function startRealtimeSynchronization(phone) {
+            if (activeDatabaseListener) activeDatabaseListener();
+            const userPath = ref(db, 'users/' + phone);
+            activeDatabaseListener = onValue(userPath, (snapshot) => {
+                const data = snapshot.val();
+                if (data && currentLoggedUser === phone) {
+                    if (data.status === 'suspended') {
+                        logout();
+                        showNotification("অ্যাকাউন্ট ব্যান্ড", "আপনার অ্যাকাউন্টটি অ্যাডমিন দ্বারা সাসপেন্ড করা হয়েছে!", "fa-ban");
+                        return;
+                    }
+                    cachedUserObj = data;
+                    updateUIBalanceDisplay();
+                    updateTransactionsHistory(data.history);
+
+                    const apiKeyInput = document.getElementById('user-api-key-display');
+                    const reqBox = document.getElementById('api-request-box');
+                    const statusNote = document.getElementById('api-status-note');
+
+                    if (data.apiKeyStatus === 'approved' && data.apiKey) {
+                        apiKeyInput.value = data.apiKey;
+                        apiKeyInput.type = "text";
+                        reqBox.style.display = "none";
+                        statusNote.innerText = "আপনার API Key সচল রয়েছে। SSLCommerz পেমেন্ট অটো-ডিটেক্ট হবে।";
+                        statusNote.style.color = "var(--accent-sky)";
+                    } else if (data.apiKeyStatus === 'pending') {
+                        apiKeyInput.value = "অ্যাডমিন অনুমোদনের অপেক্ষায় আছে...";
+                        reqBox.style.display = "none";
+                        statusNote.innerText = "৫০০০ STD পেমেন্ট সফল হয়েছে। অ্যাডমিন অনুমোদন দিলেই এখানে API Key দেখতে পাবেন।";
+                        statusNote.style.color = "#f59e0b";
+                    } else {
+                        apiKeyInput.value = "";
+                        apiKeyInput.placeholder = "API Key অনুমোদিত নয়";
+                        reqBox.style.display = "block";
+                        statusNote.innerText = "৫০০০ STD ফি দিয়ে আবেদন করলে অ্যাডমিন অনুমোদন সাপেক্ষে API Key দেওয়া হবে।";
+                        statusNote.style.color = "var(--text-secondary)";
+                    }
+                }
+            });
+        }
+
+        function toggleBalancePeek() {
+            if (!cachedUserObj) return;
+            balanceRevealed = !balanceRevealed;
+            triggerHaptic(50);
+            updateUIBalanceDisplay();
+        }
+
+        function updateUIBalanceDisplay() {
+            const balanceEl = document.getElementById('card-balance-value');
+            if (balanceRevealed) {
+                balanceEl.innerText = cachedUserObj.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else {
+                balanceEl.innerText = "•••••";
+            }
+        }
+
+        function updateTransactionsHistory(history) {
+            const listEl = document.getElementById('global-transaction-list');
+            listEl.innerHTML = '';
+
+            if (!history || history.length === 0) {
+                listEl.innerHTML = `<p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 20px 0;">এখনো কোনো লেনদেন হয়নি।</p>`;
+                return;
+            }
+
+            const historyArray = Array.isArray(history) ? history : Object.values(history);
+            historyArray.slice().reverse().forEach(item => {
+                const isReceived = (item.type === 'Received' || item.type === 'SSLCommerz Deposit' || item.type === 'Cash Out (Recv)');
+                let iconClass = isReceived ? 'fa-arrow-down-left' : 'fa-arrow-up-right';
+                let stateClass = isReceived ? 'receive' : 'send';
+                let signSymbol = isReceived ? '+' : '-';
+                let amountClass = isReceived ? 'plus' : 'minus';
+
+                listEl.innerHTML += `
+                    <div class="txn-item">
+                        <div class="txn-info">
+                            <div class="txn-icon ${stateClass}">
+                                <i class="fa-solid ${iconClass}"></i>
+                            </div>
+                            <div class="txn-details">
+                                <p>${item.type}</p>
+                                <span>${item.phone} • ${item.time}</span>
+                            </div>
+                        </div>
+                        <span class="txn-amount ${amountClass}">
+                            ${signSymbol}৳${item.amount.toLocaleString()}
+                        </span>
+                    </div>
+                `;
+            });
+        }
+
+        function simulateExternalApiPayment() {
+            const trxId = document.getElementById('sim-trx-id').value.trim();
+            const amount = Number(document.getElementById('sim-amount').value.trim());
+
+            if (!trxId || isNaN(amount) || amount <= 0) {
+                showNotification("ভুল তথ্য", "সঠিক TrxID এবং পরিমাণ দিন।", "fa-triangle-exclamation");
+                return;
+            }
+
+            if (!cachedUserObj || cachedUserObj.apiKeyStatus !== 'approved' || !cachedUserObj.apiKey) {
+                showNotification("ত্রুটি", "আপনার অ্যাকাউন্টে অনুমোদিত API Key নেই। আগে অ্যাডমিনের অনুমোদন নিন।", "fa-ban");
+                return;
+            }
+
+            const userRef = ref(db, 'users/' + currentLoggedUser);
+            let history = cachedUserObj.history ? (Array.isArray(cachedUserObj.history) ? cachedUserObj.history : Object.values(cachedUserObj.history)) : [];
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            history.push({
+                type: "SSLCommerz Deposit",
+                phone: `SUCCESS (${trxId})`,
+                amount: amount,
+                time: timeString
+            });
+
+            update(userRef, {
+                balance: cachedUserObj.balance + amount,
+                history: history
+            }).then(() => {
+                triggerSuccessFeedback('screen-receive');
+                showNotification("পেমেন্ট কনফার্মড", `SSLCommerz IPN থেকে ৳${amount} অটো-ডিটেক্ট হয়ে সফলভাবে যোগ হয়েছে!`, "fa-bolt");
+                document.getElementById('sim-trx-id').value = '';
+                document.getElementById('sim-amount').value = '';
+            });
+        }
+
+        function executeUserTransaction(type) {
+            const targetPhone = document.getElementById('send-target-phone').value.trim();
+            const amount = Number(document.getElementById('send-amount').value.trim());
+            const pin = document.getElementById('send-pin').value.trim();
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (!targetPhone || isNaN(amount) || amount <= 0 || !pin) {
+                triggerErrorShake('screen-transfer');
+                showNotification("ইনপুট ত্রুটি", "দয়া করে সবগুলো তথ্য সঠিকভাবে পূরণ করুন!", "fa-triangle-exclamation");
+                return;
+            }
+
+            if (targetPhone === currentLoggedUser) {
+                triggerErrorShake('screen-transfer');
+                showNotification("লেনদেন ব্যর্থ", "নিজের অ্যাকাউন্টে পাঠানো সম্ভব নয়।", "fa-ban");
+                return;
+            }
+
+            const senderRef = ref(db, 'users/' + currentLoggedUser);
+            const receiverRef = ref(db, 'users/' + targetPhone);
+
+            get(senderRef).then((senderSnap) => {
+                const senderData = senderSnap.val();
+                if (senderData.pin !== pin) {
+                    triggerErrorShake('send-pin');
+                    showNotification("ভুল পিন", "ভুল পিন নম্বর! লেনদেন বাতিল করা হয়েছে।", "fa-lock");
+                    return;
+                }
+                if (senderData.balance < amount) {
+                    triggerErrorShake('send-amount');
+                    showNotification("অপর্যাপ্ত ব্যালেন্স", "দুঃখিত! আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই।", "fa-wallet");
+                    return;
+                }
+
+                get(receiverRef).then((receiverSnap) => {
+                    if (!receiverSnap.exists()) {
+                        triggerErrorShake('send-target-phone');
+                        showNotification("অ্যাকাউন্ট নেই", `প্রাপকের নম্বরটি সিস্টেমে রেজিস্টার্ড নয়।`, "fa-user-minus");
+                        return;
+                    }
+
+                    const receiverData = receiverSnap.val();
+                    if (receiverData.status === 'suspended') {
+                        showNotification("অ্যাকাউন্ট স্থগিত", "প্রাপকের অ্যাকাউন্টটি স্থগিত আছে।", "fa-ban");
+                        return;
+                    }
+
+                    let senderHistory = senderData.history ? (Array.isArray(senderData.history) ? senderData.history : Object.values(senderData.history)) : [];
+                    let receiverHistory = receiverData.history ? (Array.isArray(receiverData.history) ? receiverData.history : Object.values(receiverData.history)) : [];
+
+                    senderHistory.push({ type: type, phone: targetPhone, amount: amount, time: timeString });
+                    receiverHistory.push({ type: type === 'Cash Out' ? 'Cash Out (Recv)' : 'Received', phone: currentLoggedUser, amount: amount, time: timeString });
+
+                    update(senderRef, { balance: senderData.balance - amount, history: senderHistory });
+                    update(receiverRef, { balance: receiverData.balance + amount, history: receiverHistory });
+
+                    triggerSuccessFeedback('screen-transfer');
+                    showNotification("লেনদেন সফল", `৳${amount} সফলভাবে ${type} করা হয়েছে!`, "fa-circle-check");
+
+                    document.getElementById('send-target-phone').value = '';
+                    document.getElementById('send-amount').value = '';
+                    document.getElementById('send-pin').value = '';
+                    setTimeout(() => { switchTab(1); }, 1500);
+                });
+            });
+        }
+
+        function executeManagerSettlement() {
+            const customerPhone = document.getElementById('send-target-phone').value.trim();
+            const amount = Number(document.getElementById('send-amount').value.trim());
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (!customerPhone || isNaN(amount) || amount <= 0) {
+                triggerErrorShake('screen-transfer');
+                showNotification("ইনপুট ত্রুটি", "গ্রাহকের নম্বর এবং সঠিক পরিমাণ লিখুন!", "fa-triangle-exclamation");
+                return;
+            }
+
+            const managerRef = ref(db, 'users/' + managerNumber);
+            const userRef = ref(db, 'users/' + customerPhone);
+
+            get(userRef).then((userSnap) => {
+                if (!userSnap.exists()) {
+                    showNotification("অ্যাকাউন্ট নেই", "গ্রাহকের নম্বরটি সিস্টেমে নেই!", "fa-user-minus");
+                    return;
+                }
+
+                const userData = userSnap.val();
+                if (userData.balance < amount) {
+                    showNotification("অপর্যাপ্ত ব্যালেন্স", "গ্রাহকের অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই!", "fa-wallet");
+                    return;
+                }
+
+                get(managerRef).then((mgrSnap) => {
+                    const mgrData = mgrSnap.val();
+                    let userHistory = userData.history ? (Array.isArray(userData.history) ? userData.history : Object.values(userData.history)) : [];
+                    let mgrHistory = mgrData.history ? (Array.isArray(mgrData.history) ? mgrData.history : Object.values(mgrData.history)) : [];
+
+                    userHistory.push({ type: "Cash Out (Manager)", phone: managerNumber, amount: amount, time: timeString });
+                    mgrHistory.push({ type: "Cash Out Settled", phone: customerPhone, amount: amount, time: timeString });
+
+                    update(userRef, { balance: userData.balance - amount, history: userHistory });
+                    update(managerRef, { balance: mgrData.balance + amount, history: mgrHistory });
+
+                    triggerSuccessFeedback('screen-transfer');
+                    showNotification("সেটেলমেন্ট সফল", `কাস্টমার থেকে ৳${amount} ক্যাশআউট সম্পূর্ণ হয়েছে!`, "fa-circle-check");
+
+                    document.getElementById('send-target-phone').value = '';
+                    document.getElementById('send-amount').value = '';
+                    setTimeout(() => { switchTab(1); }, 1500);
+                });
+            });
+        }
+
+        function executeAdminAction(actionType) {
+            const targetPhone = document.getElementById('admin-target-phone').value.trim();
+            const newBalance = document.getElementById('admin-target-balance').value.trim();
+
+            if (!targetPhone) {
+                triggerErrorShake('admin-target-phone');
+                showNotification("ইনপুট ত্রুটি", "টার্গেট অ্যাকাউন্ট নম্বর লিখুন!", "fa-user-gear");
+                return;
+            }
+
+            const targetRef = ref(db, 'users/' + targetPhone);
+
+            get(targetRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    showNotification("রেকর্ড পাওয়া যায়নি", "এই নম্বরটি রেজিস্টার্ড নয়!", "fa-user-minus");
+                } else {
+                    const userData = snapshot.val();
+                    let history = userData.history ? (Array.isArray(userData.history) ? userData.history : Object.values(userData.history)) : [];
+
+                    if (actionType === 'balance') {
+                        if (!newBalance || isNaN(Number(newBalance))) {
+                            showNotification("ভুল ব্যালেন্স", "সঠিক ব্যালেন্স সংখ্যা দিন!", "fa-bangladeshi-taka-sign");
+                            return;
+                        }
+
+                        history.push({
+                            type: "Received",
+                            phone: "ADMIN (SYSTEM)",
+                            amount: Number(newBalance),
+                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        });
+
+                        update(targetRef, { balance: Number(newBalance), history: history }).then(() => {
+                            showNotification("ব্যালেন্স আপডেট", `৳${newBalance} সফলভাবে আপডেট করা হয়েছে।`, "fa-check-double");
+                            document.getElementById('admin-target-balance').value = '';
+                        });
+                    } else {
+                        update(targetRef, { status: actionType }).then(() => {
+                            showNotification("স্ট্যাটাস আপডেট", `অ্যাকাউন্ট সফলভাবে ${actionType} করা হয়েছে।`, "fa-shield-halved");
+                        });
+                    }
+                }
+            });
+        }
+
+        function executeManagerAction(actionType) {
+            const targetPhone = document.getElementById('manager-control-target-phone').value.trim();
+
+            if (!targetPhone) {
+                triggerErrorShake('manager-control-target-phone');
+                showNotification("ইনপুট ত্রুটি", "গ্রাহকের অ্যাকাউন্ট নম্বর লিখুন!", "fa-user-lock");
+                return;
+            }
+
+            const targetRef = ref(db, 'users/' + targetPhone);
+
+            get(targetRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    showNotification("রেকর্ড নেই", "এই নম্বরটি সিস্টেমে নেই!", "fa-user-minus");
+                    return;
+                }
+
+                update(targetRef, { status: actionType === 'suspend' ? 'suspended' : 'active' }).then(() => {
+                    triggerSuccessFeedback('screen-manager-panel');
+                    showNotification("সফল", `অ্যাকাউন্টটি ${actionType} করা হয়েছে।`, "fa-circle-check");
+                    document.getElementById('manager-control-target-phone').value = '';
+                });
+            });
+        }
+
+        window.selectedSupportUser = null;
+
+        function openSupportModal() {
+            document.getElementById('support-phone-input').value = '';
+            document.getElementById('support-answer-input').value = '';
+            document.getElementById('support-new-pin-input').value = '';
+            document.getElementById('support-step-1').style.display = "block";
+            document.getElementById('support-step-2').style.display = "none";
+            document.getElementById('support-step-3').style.display = "none";
+            document.getElementById('support-modal').classList.add('show');
+        }
+
+        function closeSupportModal() {
+            document.getElementById('support-modal').classList.remove('show');
+        }
+
+        function verifySupportPhone() {
+            const phone = document.getElementById('support-phone-input').value.trim();
+            if (!phone) return;
+
+            get(ref(db, 'users/' + phone)).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    showNotification("অ্যাকাউন্ট নেই", "এই নম্বরে কোনো অ্যাকাউন্ট নেই।", "fa-user-minus");
+                } else {
+                    const userData = snapshot.val();
+                    window.selectedSupportUser = { phone, ...userData };
+                    document.getElementById('support-question-text').innerText = securityQuestions[userData.secQ] || "নিরাপত্তা প্রশ্ন";
+                    document.getElementById('support-step-1').style.display = "none";
+                    document.getElementById('support-step-2').style.display = "block";
+                }
+            });
+        }
+
+        function verifySupportAnswer() {
+            const answer = document.getElementById('support-answer-input').value.trim();
+            if (!window.selectedSupportUser) return;
+
+            if (answer.toLowerCase() === window.selectedSupportUser.secA.toLowerCase()) {
+                const randomNewPin = Math.floor(10000 + Math.random() * 90000).toString();
+                document.getElementById('support-new-pin-input').value = randomNewPin;
+                document.getElementById('support-step-2').style.display = "none";
+                document.getElementById('support-step-3').style.display = "block";
+            } else {
+                showNotification("ভুল উত্তর", "নিরাপত্তা প্রশ্নের উত্তর ভুল হয়েছে!", "fa-lock");
+            }
+        }
+
+        function confirmSupportPINUpdate() {
+            if (!window.selectedSupportUser) return;
+            const newPin = document.getElementById('support-new-pin-input').value;
+
+            update(ref(db, 'users/' + window.selectedSupportUser.phone), { pin: newPin }).then(() => {
+                showNotification("পিন আপডেট সফল", `নতুন পিন: ${newPin}`, "fa-circle-check");
+                closeSupportModal();
+            });
+        }
+
+        function copyWalletCode() {
+            navigator.clipboard.writeText(document.getElementById('shareable-wallet-code').value).then(() => {
+                showNotification("কপি হয়েছে", "ওয়ালেট কোড ক্লিপবোর্ডে কপি করা হয়েছে!", "fa-copy");
+            });
+        }
+
+        function copyApiKey() {
+            const val = document.getElementById('user-api-key-display').value;
+            if(!val || val.includes("অনুমোদিত")) {
+                showNotification("ত্রুটি", "আপনার কোনোভ্যালিড API Key নেই!", "fa-ban");
+                return;
+            }
+            navigator.clipboard.writeText(val).then(() => {
+                showNotification("কপি হয়েছে", "API Key ক্লিপবোর্ডে কপি করা হয়েছে!", "fa-copy");
+            });
+        }
+
+        function logout() {
+            currentLoggedUser = null;
+            userRole = "user";
+            balanceRevealed = false;
+            cachedUserObj = null;
+
+            if (activeDatabaseListener) {
+                activeDatabaseListener();
+                activeDatabaseListener = null;
+            }
+
+            document.getElementById('screen-dashboard').classList.remove('active');
+            document.getElementById('screen-transfer').classList.remove('active');
+            document.getElementById('screen-receive').classList.remove('active');
+            document.getElementById('screen-admin').classList.remove('active');
+            document.getElementById('screen-manager-panel').classList.remove('active');
+            document.getElementById('screen-service-account').classList.remove('active');
+
+            document.getElementById('screen-auth').classList.add('active');
+            document.getElementById('header-phone').innerText = "GUEST";
+            document.getElementById('logout-icon').style.display = "none";
+            document.getElementById('main-app-container').className = "app-container";
+            document.getElementById('logo-text').innerText = "STB SKY";
+
+            document.getElementById('auth-phone').value = '';
+            document.getElementById('auth-pin').value = '';
+            checkAuthModeChange();
+            showNotification("লগআউট", "আপনি সফলভাবে লগআউট হয়েছেন।", "fa-arrow-right-from-bracket");
+        }
+
+        let toastTimeout;
+        function showNotification(title, body, iconClass = "fa-circle-check") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-body').innerText = body;
+            toast.querySelector('.toast-icon i').className = `fa-solid ${iconClass}`;
+            toast.classList.add('show');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3500);
+        }
+
+        function triggerErrorShake(elementId) {
+            triggerHaptic([50, 50, 50]);
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.classList.add('shake-error');
+            setTimeout(() => { el.classList.remove('shake-error'); }, 400);
+        }
+
+        function triggerSuccessFeedback(elementId) {
+            triggerHaptic(100);
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.classList.add('success-animate');
+            setTimeout(() => { el.classList.remove('success-animate'); }, 400);
+        }
+    </script>
+</body>
+</html>
